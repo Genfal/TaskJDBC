@@ -1,87 +1,42 @@
 package jm.task.core.jdbc.service;
 
+import jm.task.core.jdbc.dao.UserDaoHibernateImpl;
+import jm.task.core.jdbc.dao.UserDaoJDBCImpl;
 import jm.task.core.jdbc.model.User;
-import jm.task.core.jdbc.util.Util;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
 import java.util.List;
 
 public class UserServiceImpl implements UserService {
-    private static Connection connection;
-    private static Statement statement;
+    private UserDaoJDBCImpl userDao = new UserDaoJDBCImpl();
+    private UserDaoHibernateImpl userDaoHibernate = new UserDaoHibernateImpl();
 
-    static {
-        try {
-            connection = Util.getConnection();
-        } catch (SQLException e) {
-            System.out.println("Не удалось подключиться " + e);
-        }
-        try {
-            statement = connection.createStatement();
-        } catch (SQLException e) {
-            System.out.println("Не удалось создать statement " + e);
-        }
-    }
-
+    @Override
     public void createUsersTable() {
-        try {
-            statement.executeUpdate("CREATE TABLE Users(" +
-                    "Id INT PRIMARY KEY AUTO_INCREMENT, " +
-                    "Name VARCHAR(100), " +
-                    "LastName VARCHAR(200), " +
-                    "Age INT)");
-        } catch (SQLException e) {
-            System.out.println("Таблица уже создана");
-        }
+        userDaoHibernate.createUsersTable();
     }
 
+    @Override
     public void dropUsersTable() {
-        try {
-            statement.executeUpdate("DROP TABLE Users");
-        } catch (SQLException e) {
-            System.out.println("Таблица осутствует " + e);
-        }
+        userDaoHibernate.dropUsersTable();
     }
 
+    @Override
     public void saveUser(String name, String lastName, byte age) {
-        try {
-            statement.executeUpdate(String.format("INSERT Users(Name, LastName, Age) VALUES('%s', '%s', '%d')", name, lastName, age));
-            System.out.printf("User с именем – %s добавлен в базу данных\n", name);
-        } catch (SQLException e) {
-            System.out.println(e);
-        }
+        userDaoHibernate.saveUser(name, lastName, age);
     }
 
+    @Override
     public void removeUserById(long id) {
-        try {
-            statement.executeUpdate(String.format("DELETE FROM Users WHERE ID = %d", id));
-        } catch (SQLException e) {
-            System.out.println(e);
-        }
+        userDaoHibernate.removeUserById(id);
     }
 
+    @Override
     public List<User> getAllUsers() {
-        List<User> userList = new ArrayList<>();
-        try {
-            ResultSet resultSet = statement.executeQuery("SELECT * FROM Users");
-            while (resultSet.next()) {
-                userList.add(new User(resultSet.getString(2), resultSet.getString(3), resultSet.getByte(4)));
-            }
-        } catch (SQLException e) {
-            System.out.println(e);
-        }
-        return userList;
+        return userDaoHibernate.getAllUsers();
     }
 
+    @Override
     public void cleanUsersTable() {
-        try {
-            statement.executeUpdate("TRUNCATE TABLE Users");
-        } catch (SQLException e) {
-            System.out.println(e);
-        }
+        userDaoHibernate.cleanUsersTable();
     }
 }
