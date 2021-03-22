@@ -1,12 +1,12 @@
 package jm.task.core.jdbc.dao;
 
-import jm.task.core.jdbc.model.*;
-import jm.task.core.jdbc.util.*;
+import jm.task.core.jdbc.model.User;
+import jm.task.core.jdbc.util.Util;
 
-import java.sql.Connection;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,11 +29,12 @@ public class UserDaoJDBCImpl implements UserDao {
 
     public void createUsersTable() {
         try {
-            statement.executeUpdate("CREATE TABLE Users(" +
+            statement.executeUpdate("CREATE TABLE IF NOT EXISTS Users(" +
                     "Id INT PRIMARY KEY AUTO_INCREMENT, " +
                     "Name VARCHAR(100), " +
                     "LastName VARCHAR(200), " +
                     "Age INT)");
+            statement.executeUpdate("COMMIT");
         } catch (SQLException e) {
             System.out.println("Таблица уже создана");
         }
@@ -41,7 +42,8 @@ public class UserDaoJDBCImpl implements UserDao {
 
     public void dropUsersTable() {
         try {
-            statement.executeUpdate("DROP TABLE Users");
+            statement.executeUpdate("DROP TABLE IF EXISTS Users");
+            statement.executeUpdate("COMMIT");
         } catch (SQLException e) {
             System.out.println("Таблица осутствует " + e);
         }
@@ -50,6 +52,7 @@ public class UserDaoJDBCImpl implements UserDao {
     public void saveUser(String name, String lastName, byte age) {
         try {
             statement.executeUpdate(String.format("INSERT Users(Name, LastName, Age) VALUES('%s', '%s', '%d')", name, lastName, age));
+            statement.executeUpdate("COMMIT");
             System.out.printf("User с именем – %s добавлен в базу данных\n", name);
         } catch (SQLException e) {
             System.out.println(e);
@@ -59,6 +62,7 @@ public class UserDaoJDBCImpl implements UserDao {
     public void removeUserById(long id) {
         try {
             statement.executeUpdate(String.format("DELETE FROM Users WHERE ID = %d", id));
+            statement.executeUpdate("COMMIT");
         } catch (SQLException e) {
             System.out.println(e);
         }
@@ -80,6 +84,7 @@ public class UserDaoJDBCImpl implements UserDao {
     public void cleanUsersTable() {
         try {
             statement.executeUpdate("TRUNCATE TABLE Users");
+            statement.executeUpdate("COMMIT");
         } catch (SQLException e) {
             System.out.println(e);
         }
