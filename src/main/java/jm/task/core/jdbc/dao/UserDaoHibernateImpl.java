@@ -3,11 +3,9 @@ package jm.task.core.jdbc.dao;
 import jm.task.core.jdbc.model.User;
 import jm.task.core.jdbc.util.Util;
 import org.hibernate.Query;
-import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -67,7 +65,7 @@ public class UserDaoHibernateImpl implements UserDao {
     public List<User> getAllUsers() {
         Session session = Util.getSesstionFactory().openSession();
         Transaction transaction = session.beginTransaction();
-        List<User> userList = session.createSQLQuery("FROM USERS").list();
+        List<User> userList = (List<User>) session.createCriteria(User.class).list();
         transaction.commit();
         session.close();
         return userList;
