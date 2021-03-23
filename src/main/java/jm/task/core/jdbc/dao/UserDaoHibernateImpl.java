@@ -2,6 +2,7 @@ package jm.task.core.jdbc.dao;
 
 import jm.task.core.jdbc.model.User;
 import jm.task.core.jdbc.util.Util;
+import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -32,7 +33,7 @@ public class UserDaoHibernateImpl implements UserDao {
             query.executeUpdate();
             transaction.commit();
             session.close();
-        } catch (Exception e) {
+        } catch (HibernateException e) {
             transaction.rollback();
         }
     }
@@ -47,7 +48,7 @@ public class UserDaoHibernateImpl implements UserDao {
             query.executeUpdate();
             transaction.commit();
             session.close();
-        } catch (Exception e) {
+        } catch (HibernateException e) {
             transaction.rollback();
         }
     }
@@ -60,7 +61,7 @@ public class UserDaoHibernateImpl implements UserDao {
             session.save(new User(name, lastName, age));
             transaction.commit();
             session.close();
-        } catch (Exception e) {
+        } catch (HibernateException e) {
             transaction.rollback();
         }
     }
@@ -73,7 +74,7 @@ public class UserDaoHibernateImpl implements UserDao {
             session.delete(id);
             transaction.commit();
             session.close();
-        } catch (Exception e) {
+        } catch (HibernateException e) {
             transaction.rollback();
         }
     }
@@ -87,7 +88,7 @@ public class UserDaoHibernateImpl implements UserDao {
             userList = (List<User>) session.createCriteria(User.class).list();
             transaction.commit();
             session.close();
-        } catch (Exception e) {
+        } catch (HibernateException e) {
             transaction.rollback();
         }
         return userList;
@@ -103,7 +104,7 @@ public class UserDaoHibernateImpl implements UserDao {
             query.executeUpdate();
             transaction.commit();
             session.close();
-        } catch (Exception e) {
+        } catch (HibernateException e) {
             transaction.rollback();
         }
     }
